@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#121217">
+  <meta
+    name="description"
+    content="Bully Council"
+  >
+  <title>Bully Council Game</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/game.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Bully Council Game home">
+        <span class="brand-mark" aria-hidden="true">BC</span>
+        <span>Bully Council Game</span>
+      </a>
+      <span class="save-status" id="save-status" role="status">Progress saves in this browser</span>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow">A cool game</p>
+        <h1>Run the <span>Council.</span></h1>
+        <p class="hero-copy">
+          Build your crew, handle hallway situations, and try not to let the
+          whole school turn against you.
+        </p>
+      </div>
+      <div class="hero-stamp" aria-label="Council status">
+        <span class="stamp-dot"></span>
+        COUNCIL IN SESSION
+      </div>
+    </section>
+
+    <section class="stats-grid" aria-label="Game statistics">
+      <article class="stat-card points-card">
+        <span class="stat-label">Bully Points</span>
+        <strong class="stat-value" id="points">10</strong>
+        <span class="stat-foot">Your council’s questionable currency</span>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Income</span>
+        <strong class="stat-value" id="income">0 / sec</strong>
+        <span class="stat-foot" id="income-note">Hire your first crew member</span>
+      </article>
+
+      <article class="stat-card heat-card">
+        <div class="heat-heading">
+          <span class="stat-label">School Heat</span>
+          <strong id="heat-value">0%</strong>
+        </div>
+        <div
+          class="heat-track"
+          role="meter"
+          aria-label="School Heat"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="heat-meter"
+        >
+          <span class="heat-fill" id="heat-fill"></span>
+        </div>
+        <span class="stat-foot" id="heat-note">Nobody’s paying much attention.</span>
+      </article>
+    </section>
+
+    <div class="main-grid">
+      <section class="panel situation-panel" aria-labelledby="situation-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">The hallway</p>
+            <h2 id="situation-heading">Random situation</h2>
+          </div>
+          <span class="live-tag"><span></span> LIVE</span>
+        </div>
+
+        <div id="situation-content" aria-live="polite"></div>
+      </section>
+
+      <section class="panel crew-panel" aria-labelledby="crew-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Your operation</p>
+            <h2 id="crew-heading">Council crew</h2>
+          </div>
+          <span class="crew-count" id="crew-count">0 hired</span>
+        </div>
+
+        <div class="crew-list" id="crew-list"></div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <span>A game about bad choices and their consequences.</span>
+      <button class="reset-button" id="reset-button" type="button">
+        Reset game
+      </button>
+    </footer>
+  </main>
+
+  <dialog class="reset-dialog" id="reset-dialog" aria-labelledby="reset-title">
+    <form method="dialog">
+      <h2 id="reset-title">Start over?</h2>
+      <p>This permanently clears this game’s saved progress in this browser.</p>
+      <div class="dialog-actions">
+        <button class="button button-quiet" value="cancel">Keep playing</button>
+        <button class="button button-danger" id="confirm-reset" value="confirm">
+          Reset progress
+        </button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
