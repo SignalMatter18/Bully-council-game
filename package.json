@@ -1,0 +1,16 @@
+{
+  "name": "bully-council-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A game about bully council.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
