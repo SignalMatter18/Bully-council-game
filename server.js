@@ -8,18 +8,15 @@ const PORT = Number(process.env.PORT) || 3000;
 const publicDirectory = path.join(__dirname, "public");
 
 app.disable("x-powered-by");
-app.use(express.static(publicDirectory, {
-  extensions: ["html"],
-  maxAge: process.env.NODE_ENV === "production" ? "1h" : 0
-}));
 
 app.get("/health", (_request, response) => {
   response.status(200).json({ status: "ok" });
 });
 
-app.get("*", (_request, response) => {
-  response.sendFile(path.join(publicDirectory, "index.html"));
-});
+app.use(express.static(publicDirectory, {
+  extensions: ["html"],
+  maxAge: process.env.NODE_ENV === "production" ? "1h" : 0
+}));
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Bully Council Game is listening on port ${PORT}`);
