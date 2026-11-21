@@ -1,8 +1,8 @@
 "use strict";
 
 (() => {
-  const SAVE\_KEY = "bully-council-game-save-v1";
-  const MAX\_OFFLINE\_SECONDS = 8 * 60 * 60;
+  const SAVE_KEY = "bully-council-game-save-v1";
+  const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
 
   const CREW = [
     {
@@ -193,8 +193,12 @@
     confirmReset: document.querySelector("#confirm-reset")
   };
 
-  const numberFormat = new Intl.NumberFormat(undefined, {
+  const compactFormat = new Intl.NumberFormat(undefined, {
     notation: "compact",
+    maximumFractionDigits: 1
+  });
+
+  const normalFormat = new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 1
   });
 
@@ -214,165 +218,157 @@
     };
   }
 
-  function finiteNonNegative(value, fallback) {
-    const number = Number(value);
-    return Number.isFinite(number) && number >= 0 ? number : fallback;
-  }
-
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
   }
 
+  function validNumber(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) && number >= 0 ? number : fallback;
+  }
+
   function loadGame() {
     try {
-      const raw = localStorage.getItem(SAVE\_KEY);
+      const raw = localStorage.getItem(SAVE_KEY);
       if (!raw) return freshGame();
 
       const saved = JSON.parse(raw);
       const game = freshGame();
 
-      game.points = finiteNonNegative(saved.points, 10);
-      game.totalEarned = finiteNonNegative(saved.totalEarned, 0);
-      game.heat = clamp(finiteNonNegative(saved.heat, 0), 0, 100);
+      game.points = validNumber(saved.points, 10);
+      game.totalEarned = validNumber(saved.totalEarned);
+      game.heat = clamp(validNumber(saved.heat), 0, 100);
 
       for (const item of CREW) {
         game.inventory[item.id] = Math.floor(
-          finiteNonNegative(saved.inventory?.[item.id], 0)
+          validNumber(saved.inventory?.[item.id])
         );
       }
 
-      const savedAt = finiteNonNegative(saved.savedAt, Date.now());
+      const savedAt = validNumber(saved.savedAt, Date.now());
       const offlineSeconds = clamp(
         (Date.now() - savedAt) / 1000,
         0,
-        MAX\_OFFLINE\_SECONDS
+        MAX_OFFLINE_SECONDS
       );
-      const offlineGain = incomePerSecondFor(game) \* offlineSeconds;
+      const offlineGain = incomePerSecondFor(game) * offlineSeconds;
 
       game.points += offlineGain;
       game.totalEarned += offlineGain;
 
       return game;
     } catch (error) {
-      console.warn("Could not load the saved game. Starting a new game.", error);
+      console.warn("Could not load saved progress; starting a new game.", error);
       return freshGame();
     }
   }
 
   function formatNumber(value) {
     if (!Number.isFinite(value)) return "Too high";
-    if (value < 1000) {
-      return new Intl.NumberFormat(undefined, {
-        maximumFractionDigits: value < 10 ? 1 : 0
-      }).format(value);
-    }
-    return numberFormat.format(value);
+    return value >= 1000 ? compactFormat.format(value) : normalFormat.format(value);
   }
 
-  function formatRate(value) {
-    return `${numberFormat.format(value)} / sec`;
+  function countOwned(id) {
+    return Math.max(0, Math.floor(state.inventory[id] || 0));
   }
 
-  function ownedCount(itemId, game = state) {
-    return Math.max(0, Math.floor(game.inventory[itemId] || 0));
-  }
-
-  function getCost(item, game = state) {
-    const owned = ownedCount(item.id, game);
+  function costFor(item) {
+    const count = countOwned(item.id);
     const multiplier = item.costMode === "tier"
-      ? Math.pow(5, owned)
-      : Math.pow(item.growth, owned);
-
+      ? Math.pow(5, count)
+      : Math.pow(item.growth, count);
     const cost = item.baseCost * multiplier;
+
     return Number.isFinite(cost) ? Math.ceil(cost) : Infinity;
   }
 
-  function rawIncomeFor(game) {
-    return CREW.reduce((sum, item) => {
-      return sum + ownedCount(item.id, game) * item.income;
-    }, 0);
+  function rawIncomeFor(game = state) {
+    return CREW.reduce(
+      (total, item) => total + (game.inventory[item.id] || 0) * item.income,
+      0
+    );
   }
 
-  function incomeMultiplierFor(game) {
+  function incomeMultiplierFor(game = state) {
     if (game.heat >= 70) return 0.75;
     if (game.heat >= 40) return 0.9;
     return 1;
   }
 
-  function incomePerSecondFor(game) {
+  function incomePerSecondFor(game = state) {
     return rawIncomeFor(game) * incomeMultiplierFor(game);
   }
 
-  function totalCrew() {
-    return CREW.reduce((sum, item) => sum + ownedCount(item.id), 0);
-  }
-
-  function heatDescription() {
-    if (state.heat >= 70) return "The whole school is watching. Income is reduced.";
-    if (state.heat >= 40) return "People are noticing. Income is slightly reduced.";
-    if (state.heat >= 15) return "A few people are starting to notice.";
-    return "Nobody’s paying much attention.";
-  }
-
   function renderStats() {
-    const income = incomePerSecondFor(state);
+    const income = incomePerSecondFor();
 
     elements.points.textContent = formatNumber(state.points);
-    elements.income.textContent = formatRate(income);
+    elements.income.textContent = `${formatNumber(income)} / sec`;
     elements.incomeNote.textContent = income === 0
       ? "Hire your first crew member"
       : `${formatNumber(state.totalEarned)} points earned so far`;
 
     elements.heatValue.textContent = `${Math.round(state.heat)}%`;
     elements.heatFill.style.width = `${state.heat}%`;
-    elements.heatMeter.setAttribute("aria-valuenow", String(Math.round(state.heat)));
-    elements.heatNote.textContent = heatDescription();
+    elements.heatMeter.setAttribute(
+      "aria-valuenow",
+      String(Math.round(state.heat))
+    );
+
+    if (state.heat >= 70) {
+      elements.heatNote.textContent = "The whole school is watching. Income is reduced.";
+    } else if (state.heat >= 40) {
+      elements.heatNote.textContent = "People are noticing. Income is slightly reduced.";
+    } else if (state.heat >= 15) {
+      elements.heatNote.textContent = "A few people are starting to notice.";
+    } else {
+      elements.heatNote.textContent = "Nobody’s paying much attention.";
+    }
   }
 
   function renderCrew() {
-    elements.crewCount.textContent = `${formatNumber(totalCrew())} hired`;
+    const total = CREW.reduce((sum, item) => sum + countOwned(item.id), 0);
+    elements.crewCount.textContent = `${formatNumber(total)} hired`;
 
     elements.crewList.innerHTML = CREW.map((item) => {
-      const count = ownedCount(item.id);
-      const cost = getCost(item);
-      const canBuy = state.points >= cost;
-      const nextIncome = item.income * incomeMultiplierFor(state);
+      const count = countOwned(item.id);
+      const cost = costFor(item);
+      const currentRate = item.income * incomeMultiplierFor();
 
-      return \`
+      return `
         <article class="crew-item">
           <div>
-            <h3>\${item.name} <span class="crew-count">×\${formatNumber(count)}</span></h3>
-            <p class="crew-description">\${item.description}</p>
+            <h3>${item.name} <span class="crew-count">×${formatNumber(count)}</span></h3>
+            <p class="crew-description">${item.description}</p>
             <div class="crew-meta">
-              <span class="rate">+\${formatNumber(item.income)} / sec each</span>
-              <span>Next: \${formatNumber(cost)} points</span>
+              <span class="rate">+${formatNumber(currentRate)} / sec each</span>
+              <span>Next: ${formatNumber(cost)} points</span>
             </div>
           </div>
           <button
             class="button buy-button"
             type="button"
-            data-buy="\${item.id}"
-            \${canBuy ? "" : "disabled"}
-            aria-label="Hire \${item.name} for \${formatNumber(cost)} Bully Points"
+            data-buy="${item.id}"
+            aria-label="Hire ${item.name} for ${formatNumber(cost)} Bully Points"
           >
-            Hire · \${formatNumber(cost)}
+            Hire · ${formatNumber(cost)}
           </button>
         </article>
-      \`;
+      `;
     }).join("");
 
-    // Keep the effective rate visible when Heat has reduced production.
-    if (state.heat >= 40) {
-      const rateSpans = elements.crewList.querySelectorAll(".rate");
-      rateSpans.forEach((span, index) => {
-        const item = CREW[index];
-        span.textContent =
-          `+${formatNumber(item.income * incomeMultiplierFor(state))} / sec each now`;
-      });
-    }
+    updateBuyButtons();
   }
 
-  function chooseSituation() {
+  // Update existing buttons instead of rebuilding them on every game tick.
+  function updateBuyButtons() {
+    elements.crewList.querySelectorAll("[data-buy]").forEach((button) => {
+      const item = CREW.find((candidate) => candidate.id === button.dataset.buy);
+      button.disabled = !item || state.points < costFor(item);
+    });
+  }
+
+  function pickSituation() {
     if (SITUATIONS.length === 1) return SITUATIONS[0];
 
     let next;
@@ -385,16 +381,16 @@
 
   function renderSituation() {
     if (!currentSituation) {
-      elements.situation.innerHTML = \`
+      elements.situation.innerHTML = `
         <div class="situation-card">
           <p class="eyebrow">Situation handled</p>
           <h3 class="situation-title">The hallway moves on</h3>
-          <p class="situation-copy">\${lastOutcome}</p>
+          <p class="situation-copy">${lastOutcome}</p>
           <button class="button button-primary next-situation" type="button" data-next>
             Get another situation
           </button>
         </div>
-      \`;
+      `;
       return;
     }
 
@@ -412,33 +408,28 @@
           ? ` · ${choice.heat}% Heat`
           : "";
 
-      const rewardClass = choice.points < 0 ? "choice-reward cost" : "choice-reward";
-      const pointsText = choice.points >= 0
-        ? `+${choice.points} points`
-        : `${choice.points} points`;
-
-      return \`
-        <button class="choice-button" type="button" data-choice="\${index}">
-          <span class="choice-text">\${choice.label}</span>
-          <span class="\${rewardClass}">\${pointsText}\${heatText}</span>
+      return `
+        <button class="choice-button" type="button" data-choice="${index}">
+          <span class="choice-text">${choice.label}</span>
+          <span class="choice-reward">+${choice.points} points${heatText}</span>
         </button>
-      \`;
+      `;
     }).join("");
 
-    elements.situation.innerHTML = \`
+    elements.situation.innerHTML = `
       <div class="situation-card">
         <div class="character-row">
-          <div class="character-avatar" aria-hidden="true">\${initials}</div>
+          <div class="character-avatar" aria-hidden="true">${initials}</div>
           <div>
-            <p class="character-name">\${currentSituation.character}</p>
-            <p class="character-role">\${currentSituation.role}</p>
+            <p class="character-name">${currentSituation.character}</p>
+            <p class="character-role">${currentSituation.role}</p>
           </div>
         </div>
-        <h3 class="situation-title">\${currentSituation.title}</h3>
-        <p class="situation-copy">\${currentSituation.text}</p>
-        <div class="choices">\${choices}</div>
+        <h3 class="situation-title">${currentSituation.title}</h3>
+        <p class="situation-copy">${currentSituation.text}</p>
+        <div class="choices">${choices}</div>
       </div>
-    \`;
+    `;
   }
 
   function renderAll() {
@@ -450,7 +441,7 @@
   function saveGame() {
     try {
       state.savedAt = Date.now();
-      localStorage.setItem(SAVE\_KEY, JSON.stringify(state));
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
       elements.saveStatus.textContent = "Progress saved in this browser";
       lastSave = Date.now();
     } catch (error) {
@@ -459,15 +450,15 @@
     }
   }
 
-  function buyCrew(itemId) {
-    const item = CREW.find((candidate) => candidate.id === itemId);
+  function buyCrew(id) {
+    const item = CREW.find((candidate) => candidate.id === id);
     if (!item) return;
 
-    const cost = getCost(item);
+    const cost = costFor(item);
     if (!Number.isFinite(cost) || state.points < cost) return;
 
     state.points -= cost;
-    state.inventory[item.id] += 1;
+    state.inventory[id] += 1;
 
     renderStats();
     renderCrew();
@@ -480,9 +471,9 @@
     const choice = currentSituation.choices[index];
     if (!choice) return;
 
-    const before = state.points;
+    const oldPoints = state.points;
     state.points = Math.max(0, state.points + choice.points);
-    state.totalEarned += Math.max(0, state.points - before);
+    state.totalEarned += Math.max(0, state.points - oldPoints);
     state.heat = clamp(state.heat + choice.heat, 0, 100);
 
     lastOutcome = choice.result;
@@ -497,18 +488,34 @@
     const elapsedSeconds = Math.max(0, (now - lastTick) / 1000);
     lastTick = now;
 
-    const earned = incomePerSecondFor(state) * elapsedSeconds;
+    const earned = incomePerSecondFor() * elapsedSeconds;
     if (earned > 0) {
       state.points += earned;
       state.totalEarned += earned;
     }
 
     renderStats();
-    renderCrew();
+    updateBuyButtons();
 
     if (now - lastSave >= 5000) {
       saveGame();
     }
+  }
+
+  function resetGame() {
+    state = freshGame();
+    currentSituation = pickSituation();
+    lastOutcome = "";
+    lastTick = Date.now();
+
+    try {
+      localStorage.removeItem(SAVE_KEY);
+    } catch (error) {
+      console.warn("Could not clear saved progress.", error);
+    }
+
+    renderAll();
+    saveGame();
   }
 
   elements.crewList.addEventListener("click", (event) => {
@@ -518,13 +525,14 @@
 
   elements.situation.addEventListener("click", (event) => {
     const choiceButton = event.target.closest("[data-choice]");
+
     if (choiceButton) {
       handleChoice(Number(choiceButton.dataset.choice));
       return;
     }
 
     if (event.target.closest("[data-next]")) {
-      currentSituation = chooseSituation();
+      currentSituation = pickSituation();
       lastOutcome = "";
       renderSituation();
     }
@@ -538,27 +546,11 @@
     }
   });
 
-  function resetGame() {
-    state = freshGame();
-    currentSituation = chooseSituation();
-    lastOutcome = "";
-    lastTick = Date.now();
-
-    try {
-      localStorage.removeItem(SAVE\_KEY);
-    } catch (error) {
-      console.warn("Could not clear the saved game.", error);
-    }
-
-    renderAll();
-    saveGame();
-  }
-
   elements.confirmReset.addEventListener("click", resetGame);
-
   window.addEventListener("beforeunload", saveGame);
 
-  currentSituation = chooseSituation();
+  currentSituation = pickSituation();
   renderAll();
+
   window.setInterval(tick, 250);
 })();
