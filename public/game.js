@@ -1,4 +1,3 @@
-
 const source = {
   iran: {
     name: "U.S. Department of State — FRUS, Iran 1951–1954",
