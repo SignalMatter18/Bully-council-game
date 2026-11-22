@@ -8,185 +8,52 @@
     * { box-sizing: border-box; }
 
     body {
-      margin: 0;
-      padding: 24px 14px 40px;
-      background: #f2f0e9;
-      color: #25251f;
-      font: 16px/1.45 Arial, sans-serif;
-    }
+  background: #17191c;
+  color: #e8e8e2;
+}
 
-    main {
-      width: min(920px, 100%);
-      margin: 0 auto;
-    }
+.panel, .score {
+  background: #24272c;
+  border-color: #484c52;
+}
 
-    h1 {
-      margin: 0 0 5px;
-      font-size: 27px;
-      font-weight: 600;
-      text-transform: lowercase;
-    }
+.muted { color: #b1b3b6; }
 
-    h2 {
-      margin: 0 0 12px;
-      font-size: 19px;
-      font-weight: 600;
-    }
+button, .choice {
+  background: #30343a;
+  color: #f0f0eb;
+  border-color: #62666c;
+}
 
-    p { margin: 6px 0 12px; }
+button:hover:not(:disabled) { background: #41464d; }
 
-    .topline {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
+.choice.correct { background: #263d2b; border-color: #56835e; }
+.choice.wrong { background: #452b2b; border-color: #9a514b; }
 
-    .score {
-      border: 1px solid #aaa69a;
-      background: #fffdf7;
-      padding: 7px 12px;
-      white-space: nowrap;
-    }
+input, select, textarea {
+  background: #30343a;
+  color: #f0f0eb;
+  border-color: #62666c;
+}
 
-    .panel {
-      border: 1px solid #b9b5a9;
-      background: #fffdf7;
-      padding: 18px;
-      margin: 14px 0;
-    }
+#board {
+  background-color: #29251f;
+  border-color: #665741;
+}
 
-    .muted { color: #66645c; }
-    .small { font-size: 13px; }
+.pin {
+  background: #393326;
+  color: #f0e7cf;
+  border-color: #756546;
+}
 
-    #question {
-      font-size: 19px;
-      margin: 14px 0;
-    }
+.pin .tag {
+  background: #51472f;
+  border-color: #756546;
+}
 
-    #choices {
-      display: grid;
-      gap: 8px;
-    }
+#feedback a, .source-link, .pin a { color: #9bc8f1; }
 
-    button, input, select, textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-      border: 1px solid #827f73;
-      background: #f7f5ed;
-      color: #25251f;
-      padding: 9px 12px;
-    }
-
-    button:hover:not(:disabled) { background: #e9e5d8; }
-    button:disabled { cursor: default; opacity: .6; }
-
-    .choice {
-      text-align: left;
-      background: white;
-    }
-
-    .choice.correct { border-color: #4d7255; background: #e9f1e8; }
-    .choice.wrong { border-color: #9a514b; background: #f5e8e5; }
-
-    #feedback {
-      min-height: 28px;
-      margin: 13px 0;
-    }
-
-    #feedback a, .source-link { color: #234e72; }
-
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-
-    input, select, textarea {
-      border: 1px solid #aaa69a;
-      background: white;
-      padding: 9px;
-    }
-
-    #pinText {
-      flex: 1 1 260px;
-    }
-
-    #board {
-      position: relative;
-      min-height: 150px;
-      padding: 12px;
-      border: 1px solid #9e8060;
-      background-color: #e9dfc9;
-      background-image:
-        linear-gradient(rgba(120, 100, 70, .05) 1px, transparent 1px);
-      background-size: 100% 24px;
-      overflow: hidden;
-    }
-
-    #lines {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    #pins {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 12px;
-    }
-
-    .pin {
-      position: relative;
-      z-index: 1;
-      padding: 10px;
-      min-height: 80px;
-      border: 1px solid #b9ad91;
-      background: #fff8db;
-      overflow-wrap: anywhere;
-    }
-
-    .pin .tag {
-      display: inline-block;
-      margin-top: 7px;
-      padding: 2px 6px;
-      border: 1px solid #b9ad91;
-      background: #f4e8be;
-      font-size: 12px;
-    }
-
-    .pin a {
-      display: block;
-      margin-top: 7px;
-      font-size: 13px;
-    }
-
-    .pin .remove {
-      float: right;
-      padding: 1px 6px;
-      font-size: 12px;
-    }
-
-    .notice {
-      border-left: 3px solid #8e7856;
-      padding-left: 10px;
-    }
-
-    #done { display: none; }
-
-    @media (max-width: 560px) {
-      body { padding: 16px 10px 28px; }
-      .panel { padding: 14px; }
-      .topline { align-items: flex-start; }
-    }
   </style>
 </head>
 <body>
