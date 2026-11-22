@@ -1,245 +1,368 @@
-const questionBank = [
-  // CIA
-  {
-    agency: "CIA",
-    topic: "Covert action",
-    question: "What action did a 1953 CIA memorandum discuss planning in Iran?",
-    choices: [
-      "Overthrowing Prime Minister Mohammad Mosaddeq",
-      "Starting a public health program",
-      "Building a national parliament",
-      "Ending the monarchy"
-    ],
-    answer: 0,
-    fact: "The declassified memorandum is titled “Factors Involved in the Overthrow of Mossadeq.” It discusses factors related to a planned overthrow of Iran’s prime minister.",
-    source: "U.S. Department of State historical record",
+const source = {
+  iran: {
+    name: "U.S. Department of State historical record",
     url: "https://history.state.gov/historicaldocuments/frus1951-54Iran/d192"
   },
-  {
-    agency: "CIA",
-    topic: "Covert action",
-    question: "In Guatemala in 1953, the CIA took responsibility for operations against which government?",
-    choices: [
-      "Jacobo Árbenz’s government",
-      "The government of Costa Rica",
-      "The government of Canada",
-      "The government of Sweden"
-    ],
-    answer: 0,
-    fact: "A declassified U.S. government memorandum describes CIA responsibility for operations against the government of Guatemalan president Jacobo Árbenz.",
-    source: "U.S. Department of State historical record",
-    url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d287"
+  guatemala: {
+    name: "U.S. Department of State historical record",
+    url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d51"
   },
-  {
-    agency: "CIA",
-    topic: "Political disruption",
-    question: "What did a declassified account say about propaganda used during the Guatemala operation?",
-    choices: [
-      "Reports about Soviet arms deliveries were fabricated, and a planted arms cache was publicized",
-      "All CIA plans were publicly announced before the operation",
-      "Only neutral weather reports were broadcast",
-      "A correction was broadcast before the reports"
-    ],
-    answer: 0,
-    fact: "The account describes fabricated reports about Soviet arms deliveries and a planted arms cache used in the propaganda effort. This question refers to the account’s description, not an independent claim about every event in the operation.",
-    source: "U.S. Department of State historical record",
-    url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d287"
+  guatemalaOps: {
+    name: "U.S. Department of State historical record",
+    url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d61"
   },
-  {
-    agency: "CIA",
-    topic: "Covert action",
-    question: "Where did the CIA account say members of Castillo Armas’s group were trained?",
-    choices: [
-      "Nicaragua",
-      "Guatemala City",
-      "Panama",
-      "Cuba"
-    ],
-    answer: 0,
-    fact: "The declassified memorandum says approximately 85 members of the Castillo Armas group received training in Nicaragua.",
-    source: "U.S. Department of State historical record",
-    url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d287"
+  guatemalaBudget: {
+    name: "U.S. Department of State historical record",
+    url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d75"
   },
-  {
-    agency: "CIA",
-    topic: "Human research",
-    question: "What kind of research did the title of the 1977 Senate hearing say MKULTRA involved?",
-    choices: [
-      "Research in behavioral modification",
-      "Public housing research",
-      "Weather forecasting",
-      "Election administration"
-    ],
-    answer: 0,
-    fact: "The Senate hearing identifies MKULTRA as a CIA program of research in behavioral modification. The hearing is an official record of congressional oversight.",
-    source: "U.S. Senate Intelligence Committee hearing",
-    url: "https://www.intelligence.senate.gov/1977/08/03/hearings-joint-hearing-subcommittee-health-and-scientific-research-committee-human-resources-project/"
-  },
-
-  // FBI
-  {
-    agency: "FBI",
-    topic: "Political disruption",
-    question: "What was COINTELPRO, according to the Senate Church Committee?",
-    choices: [
-      "A covert FBI program intended to disrupt and discredit groups and individuals",
-      "A public library digitization project",
-      "A wildlife protection program",
-      "A system for counting election ballots"
-    ],
-    answer: 0,
-    fact: "The Senate’s Church Committee history describes COINTELPRO as a covert FBI program intended to disrupt and discredit groups and individuals.",
-    source: "U.S. Senate Church Committee history",
+  church: {
+    name: "U.S. Senate Church Committee history",
     url: "https://www.senate.gov/about/powers-procedures/investigations/church-committee.htm"
   },
-  {
-    agency: "FBI",
-    topic: "Political disruption",
-    question: "Which movement did the Senate list among COINTELPRO targets?",
-    choices: [
-      "The anti-Vietnam War movement",
-      "Professional baseball",
-      "International shipping companies",
-      "Local gardening clubs"
-    ],
-    answer: 0,
-    fact: "The Senate’s account lists the anti-Vietnam War movement among groups targeted by FBI counterintelligence programs.",
-    source: "U.S. Senate Church Committee history",
-    url: "https://www.senate.gov/about/powers-procedures/investigations/church-committee.htm"
-  },
-  {
-    agency: "FBI",
-    topic: "Political disruption",
-    question: "Which civil-rights organization did the Senate list among groups targeted by COINTELPRO?",
-    choices: [
-      "The Southern Christian Leadership Conference",
-      "The American Red Cross",
-      "The National Park Service",
-      "The League of Women Voters"
-    ],
-    answer: 0,
-    fact: "The Senate’s Church Committee history lists the Southern Christian Leadership Conference among organizations targeted by FBI counterintelligence programs.",
-    source: "U.S. Senate Church Committee history",
-    url: "https://www.senate.gov/about/powers-procedures/investigations/church-committee.htm"
-  },
-  {
-    agency: "FBI",
-    topic: "Surveillance",
-    question: "When did FBI monitoring of Martin Luther King Jr. begin, according to Stanford’s King Institute?",
-    choices: [
-      "During the Montgomery bus boycott in December 1955",
-      "After he received the Nobel Peace Prize",
-      "In the 1980s",
-      "Only after his assassination"
-    ],
-    answer: 0,
-    fact: "Stanford’s Martin Luther King, Jr. Research and Education Institute says FBI monitoring began in December 1955, during the Montgomery bus boycott.",
-    source: "Stanford Martin Luther King, Jr. Research and Education Institute",
+  king: {
+    name: "Stanford Martin Luther King, Jr. Research and Education Institute",
     url: "https://kinginstitute.stanford.edu/federal-bureau-investigation-fbi"
   },
-  {
-    agency: "FBI",
-    topic: "Surveillance",
-    question: "Which person is documented by Stanford’s King Institute as a target of FBI surveillance?",
-    choices: [
-      "Martin Luther King Jr.",
-      "Cesar Chavez",
-      "Rosa Parks",
-      "John Lewis"
-    ],
-    answer: 0,
-    fact: "The King Institute documents FBI surveillance of Martin Luther King Jr. and describes the agency’s efforts to investigate and discredit him.",
-    source: "Stanford Martin Luther King, Jr. Research and Education Institute",
-    url: "https://kinginstitute.stanford.edu/federal-bureau-investigation-fbi"
-  },
-
-  // NSA
-  {
-    agency: "NSA",
-    topic: "Surveillance",
-    question: "Which two NSA projects did the Senate Church Committee identify in its investigation of domestic surveillance?",
-    choices: [
-      "SHAMROCK and MINARET",
-      "MKULTRA and COINTELPRO",
-      "PBSUCCESS and TPAJAX",
-      "Apollo and Mercury"
-    ],
-    answer: 0,
-    fact: "The Senate Church Committee’s account discusses NSA Projects SHAMROCK and MINARET in its investigation of government surveillance.",
-    source: "U.S. Senate Church Committee history",
-    url: "https://www.senate.gov/about/powers-procedures/investigations/church-committee.htm"
-  },
-  {
-    agency: "NSA",
-    topic: "Surveillance",
-    question: "What kind of information did the NSA’s Section 215 bulk telephony program collect?",
-    choices: [
-      "Telephone call records, or metadata",
-      "The spoken contents of every call",
-      "Printed books from public libraries",
-      "Only international television broadcasts"
-    ],
-    answer: 0,
-    fact: "The program collected telephone metadata—records about calls, rather than the audio contents of calls. The oversight board reviewed the program and its legal basis.",
-    source: "Privacy and Civil Liberties Oversight Board",
+  pclos: {
+    name: "Privacy and Civil Liberties Oversight Board",
     url: "https://www.pclob.gov/Oversight"
   },
-  {
-    agency: "NSA",
-    topic: "Records and oversight",
-    question: "What concern did the oversight board raise about the Section 215 bulk phone-records program?",
-    choices: [
-      "It found little evidence the program produced unique, material counterterrorism results",
-      "It said the program had solved every terrorism case",
-      "It said the program collected no phone records",
-      "It said the program was run by local police"
-    ],
-    answer: 0,
-    fact: "The Privacy and Civil Liberties Oversight Board reported little evidence that the bulk collection program had produced unique, material counterterrorism results.",
-    source: "Privacy and Civil Liberties Oversight Board",
-    url: "https://www.pclob.gov/Oversight"
+  tuskegee: {
+    name: "Centers for Disease Control and Prevention",
+    url: "https://www.cdc.gov/tuskegee/about/index.html"
   },
-  {
-    agency: "NSA",
-    topic: "Records and oversight",
-    question: "What did the USA FREEDOM Act of 2015 do to bulk collection under Section 215?",
-    choices: [
-      "Ended bulk collection under that authority and created a new provider-records process",
-      "Required every phone call to be recorded",
-      "Transferred the program to the FBI",
-      "Created Project SHAMROCK"
-    ],
-    answer: 0,
-    fact: "The 2015 government statement describes the USA FREEDOM Act as ending bulk collection under Section 215 and establishing a new process involving records held by providers.",
-    source: "U.S. Department of Justice statement",
-    url: "https://www.justice.gov/archives/opa/pr/joint-statement-department-justice-and-office-director-national-intelligence-declassificati-1"
+  tuskegeeTimeline: {
+    name: "Centers for Disease Control and Prevention",
+    url: "https://www.cdc.gov/tuskegee/about/timeline.html"
   },
-  {
-    agency: "NSA",
-    topic: "Records and oversight",
-    question: "Under the new Section 215 process described in the government’s 2015 statement, where did phone records remain?",
-    choices: [
-      "With telephone companies",
-      "On a public website",
-      "In a public library",
-      "At the Federal Election Commission"
-    ],
-    answer: 0,
-    fact: "The government’s statement says phone records remained with telephone companies, with access handled through the new legal process.",
-    source: "U.S. Department of Justice statement",
-    url: "https://www.justice.gov/archives/opa/pr/joint-statement-department-justice-and-office-director-national-intelligence-declassificati-1"
+  ihs: {
+    name: "U.S. Government Accountability Office",
+    url: "https://www.gao.gov/products/hrd-77-3"
+  },
+  wra: {
+    name: "National Archives and Records Administration",
+    url: "https://www.archives.gov/research/aapi/ww2/genealogy"
+  },
+  eo9066: {
+    name: "National Archives and Records Administration",
+    url: "https://www.archives.gov/milestone-documents/executive-order-9066"
+  },
+  dhs: {
+    name: "Department of Health and Human Services Office of Inspector General",
+    url: "https://oig.hhs.gov/reports/all/2020/communication-and-management-challenges-impeded-hhss-response-to-the-zero-tolerance-policy/"
   }
+};
+
+function makeQuestion(agency, topic, question, choices, answer, fact, ref) {
+  return { agency, topic, question, choices, answer, fact, source: ref.name, url: ref.url };
+}
+
+const questionBank = [
+  // CIA — Iran and Guatemala
+  makeQuestion(
+    "CIA", "Covert action",
+    "What action did a 1953 CIA memorandum discuss planning in Iran?",
+    ["Overthrowing Prime Minister Mohammad Mosaddeq", "Starting a public health program", "Building a national parliament", "Ending the monarchy"],
+    0,
+    "The declassified memorandum is titled “Factors Involved in the Overthrow of Mossadeq.” It discusses planning related to the overthrow of Iran’s prime minister.",
+    source.iran
+  ),
+  makeQuestion(
+    "CIA", "Covert action",
+    "What was the CIA’s Guatemala project called?",
+    ["PBSUCCESS", "SHAMROCK", "COINTELPRO", "MINARET"],
+    0,
+    "Declassified records identify the CIA’s Guatemala operation as Project PBSUCCESS.",
+    source.guatemalaBudget
+  ),
+  makeQuestion(
+    "CIA", "Covert action",
+    "Which Guatemalan president was the target of the CIA’s PBSUCCESS operation?",
+    ["Jacobo Árbenz", "Juan José Arévalo", "Jorge Ubico", "Miguel Ydígoras Fuentes"],
+    0,
+    "U.S. government records describe PBSUCCESS as an operation directed against the government of President Jacobo Árbenz.",
+    source.guatemala
+  ),
+  makeQuestion(
+    "CIA", "Political disruption",
+    "What did a CIA planning document say could be used in its Guatemala campaign?",
+    ["Real or, when necessary, fabricated evidence", "Only public court judgments", "No information about Guatemala", "Public referendums"],
+    0,
+    "A 1953 planning document said real or, when necessary, fabricated evidence could be used at an Organization of American States conference.",
+    source.guatemala
+  ),
+  makeQuestion(
+    "CIA", "Political disruption",
+    "Which method appears in a CIA record about the Guatemala operation?",
+    ["Covert media and propaganda distribution", "A public election-monitoring mission", "A humanitarian vaccination drive", "A public release of every operational file"],
+    0,
+    "CIA records discuss covert media, pamphlets, and other propaganda activities as part of the operation.",
+    source.guatemalaOps
+  ),
+
+  // FBI — Church Committee and King Institute records
+  makeQuestion(
+    "FBI", "Political disruption",
+    "What did the Senate Church Committee say COINTELPRO was designed to do?",
+    ["Disrupt and discredit groups and individuals", "Provide legal services to protest groups", "Register voters", "Investigate only financial fraud"],
+    0,
+    "The Senate describes COINTELPRO as a covert FBI program designed to disrupt and discredit groups and individuals considered a threat to the social order.",
+    source.church
+  ),
+  makeQuestion(
+    "FBI", "Political disruption",
+    "Which organization did the Senate list among COINTELPRO targets?",
+    ["The Southern Christian Leadership Conference", "The American Red Cross", "The National Park Service", "The Federal Reserve"],
+    0,
+    "The Senate’s account lists the Southern Christian Leadership Conference among organizations targeted by the FBI program.",
+    source.church
+  ),
+  makeQuestion(
+    "FBI", "Political disruption",
+    "Which movement did the Senate list among COINTELPRO targets?",
+    ["The anti-Vietnam War movement", "The civil aviation industry", "The national park system", "The U.S. Postal Service"],
+    0,
+    "The Senate lists the anti-Vietnam War movement among the groups targeted by FBI counterintelligence programs.",
+    source.church
+  ),
+  makeQuestion(
+    "FBI", "Surveillance",
+    "When does Stanford’s King Institute say FBI monitoring of Martin Luther King Jr. began?",
+    ["December 1955, during the Montgomery bus boycott", "After he received the Nobel Peace Prize", "In the 1980s", "Only after his assassination"],
+    0,
+    "Stanford’s King Institute says FBI monitoring began in December 1955, during the Montgomery bus boycott.",
+    source.king
+  ),
+  makeQuestion(
+    "FBI", "Political disruption",
+    "Which elected officials did the Senate say were among the targets of FBI counterintelligence programs?",
+    ["Local, state, and federal officials", "Only foreign officials", "No elected officials", "Only members of the Supreme Court"],
+    0,
+    "The Senate’s summary says FBI counterintelligence targets included local, state, and federal elected officials.",
+    source.church
+  ),
+
+  // NSA — Church Committee and oversight-board records
+  makeQuestion(
+    "NSA", "Surveillance",
+    "Which two NSA projects did the Senate Church Committee identify?",
+    ["SHAMROCK and MINARET", "MKULTRA and COINTELPRO", "PBSUCCESS and TPAJAX", "Apollo and Mercury"],
+    0,
+    "The Senate’s account names NSA Projects SHAMROCK and MINARET in its investigation of intelligence abuses.",
+    source.church
+  ),
+  makeQuestion(
+    "NSA", "Surveillance",
+    "What did the Senate say SHAMROCK and MINARET monitored?",
+    ["Wire communications to and from the United States", "Only public radio broadcasts", "Weather satellite images", "Local library records"],
+    0,
+    "The Senate’s account says the projects monitored wire communications to and from the United States.",
+    source.church
+  ),
+  makeQuestion(
+    "NSA", "Surveillance",
+    "What did the Senate say happened to some information from SHAMROCK and MINARET?",
+    ["Some data was shared with other intelligence agencies", "It was all published in newspapers", "It was deleted before review", "It was sent only to state governments"],
+    0,
+    "The Senate’s account says some of the data from these programs was shared with other intelligence agencies.",
+    source.church
+  ),
+  makeQuestion(
+    "NSA", "Records and oversight",
+    "What did the Section 215 bulk telephone records program collect?",
+    ["Telephone call records, or metadata", "The spoken contents of every call", "Printed books", "Only television broadcasts"],
+    0,
+    "The program concerned bulk telephone metadata—records about calls, rather than the audio content of calls.",
+    source.pclos
+  ),
+  makeQuestion(
+    "NSA", "Records and oversight",
+    "What kind of report did the oversight board publish about Section 215?",
+    ["A report on the bulk telephone records program and the FISA Court", "A report on national parks", "A report on airline safety", "A report on public school funding"],
+    0,
+    "The Privacy and Civil Liberties Oversight Board published a report analyzing the Section 215 telephone records program and the operations of the Foreign Intelligence Surveillance Court.",
+    source.pclos
+  ),
+
+  // U.S. Public Health Service — Tuskegee study
+  makeQuestion(
+    "U.S. Public Health Service", "Human research",
+    "When did the U.S. Public Health Service study at Tuskegee begin?",
+    ["1932", "1945", "1957", "1972"],
+    0,
+    "The CDC says the U.S. Public Health Service began the study in 1932 with the Tuskegee Institute.",
+    source.tuskegeeTimeline
+  ),
+  makeQuestion(
+    "U.S. Public Health Service", "Human research",
+    "How many men were initially included in the Tuskegee study, according to the CDC?",
+    ["600", "60", "6,000", "12,000"],
+    0,
+    "The CDC says the study initially involved 600 Black men: 399 with syphilis and 201 who did not have the disease.",
+    source.tuskegeeTimeline
+  ),
+  makeQuestion(
+    "U.S. Public Health Service", "Human research",
+    "What does the CDC say about informed consent in the Tuskegee study?",
+    ["Participants’ informed consent was not collected", "Every participant signed a modern consent form", "The study did not involve human participants", "Consent was collected only after the study ended"],
+    0,
+    "The CDC states that participants’ informed consent was not collected. Researchers told the men they were being treated for “bad blood.”",
+    source.tuskegee
+  ),
+  makeQuestion(
+    "U.S. Public Health Service", "Human research",
+    "After penicillin became widely available, what happened to the Tuskegee study participants?",
+    ["They were not offered the treatment as part of the study", "They were all given penicillin immediately", "The study changed to a penicillin trial", "The study moved overseas"],
+    0,
+    "The CDC says participants were not offered treatment even after penicillin became widely available.",
+    source.tuskegeeTimeline
+  ),
+  makeQuestion(
+    "U.S. Public Health Service", "Records and oversight",
+    "When did the Tuskegee study end?",
+    ["1972", "1932", "1943", "1997"],
+    0,
+    "The CDC says the study ended in 1972 after news coverage and an advisory-panel review.",
+    source.tuskegee
+  ),
+
+  // Indian Health Service — GAO review
+  makeQuestion(
+    "Indian Health Service", "Human research",
+    "What did the 1976 GAO report review at Indian Health Service facilities?",
+    ["Sterilization procedures and consent practices", "School lunch programs", "National park management", "Air traffic control"],
+    0,
+    "The GAO reviewed permanent sterilization procedures at Indian Health Service and contract facilities, among other topics.",
+    source.ihs
+  ),
+  makeQuestion(
+    "Indian Health Service", "Records and oversight",
+    "What did GAO find about sterilization procedures in the areas it reviewed?",
+    ["They were generally not in compliance with IHS regulations", "Every area exceeded the regulations", "No procedures were reviewed", "The procedures were controlled by state courts"],
+    0,
+    "GAO reported that the areas it reviewed were generally not in compliance with Indian Health Service regulations.",
+    source.ihs
+  ),
+  makeQuestion(
+    "Indian Health Service", "Records and oversight",
+    "What did GAO say about many consent forms it reviewed?",
+    ["Most did not comply with IHS requirements", "They were all missing from every record", "They were all written by patients", "They were reviewed by Congress before signing"],
+    0,
+    "GAO found that although consent forms were present in the medical files it reviewed, most did not comply with IHS requirements.",
+    source.ihs
+  ),
+  makeQuestion(
+    "Indian Health Service", "Records and oversight",
+    "Which groups did GAO specifically mention in its concerns about sterilization rules?",
+    ["People under 21 and people who were mentally incompetent", "People who had moved between states", "People over age 65 only", "Federal employees"],
+    0,
+    "GAO recommended training on requirements involving people under 21 and people who were mentally incompetent, as well as informed consent.",
+    source.ihs
+  ),
+  makeQuestion(
+    "Indian Health Service", "Records and oversight",
+    "What did GAO recommend improving for sterilization consent?",
+    ["Full disclosure on a standard consent form and staff training", "Ending the use of medical records", "Replacing consent with a verbal announcement", "Moving all treatment out of federal facilities"],
+    0,
+    "GAO recommended a standard form providing the required information and training for physicians and administrators.",
+    source.ihs
+  ),
+
+  // War Relocation Authority — Japanese American incarceration
+  makeQuestion(
+    "War Relocation Authority", "Political disruption",
+    "What did the War Relocation Authority administer during World War II?",
+    ["The largest U.S. incarceration program for Japanese Americans", "The Manhattan Project", "The Marshall Plan", "The national highway system"],
+    0,
+    "The National Archives describes the WRA as the federal agency that administered the largest World War II incarceration program in the United States.",
+    source.wra
+  ),
+  makeQuestion(
+    "War Relocation Authority", "Political disruption",
+    "How many WRA incarceration camps does the National Archives identify?",
+    ["Ten", "Two", "Thirty", "One hundred"],
+    0,
+    "The National Archives identifies ten WRA incarceration camps.",
+    source.wra
+  ),
+  makeQuestion(
+    "War Relocation Authority", "Political disruption",
+    "From which region were Japanese Americans forcibly removed to WRA camps?",
+    ["Parts of California, Oregon, Washington, and Arizona designated as military areas", "Only Hawaii", "Only New York City", "Every U.S. state equally"],
+    0,
+    "The National Archives describes people of Japanese ancestry as forcibly removed from designated military areas in parts of California, Oregon, Washington, and Arizona.",
+    source.wra
+  ),
+  makeQuestion(
+    "War Relocation Authority", "Records and oversight",
+    "Did incarceration affect only Japanese immigrants who were not U.S. citizens?",
+    ["No. Japanese Americans who were U.S. citizens were also incarcerated", "Yes. Only noncitizens were incarcerated", "Yes. Only military personnel were incarcerated", "No Japanese Americans were incarcerated"],
+    0,
+    "National Archives records cover both Japanese Americans and Japanese immigrants, including U.S. citizens and noncitizens.",
+    source.wra
+  ),
+  makeQuestion(
+    "War Relocation Authority", "Records and oversight",
+    "What did Executive Order 9066 authorize, according to the National Archives?",
+    ["Military authorities to exclude people from designated areas", "The WRA to hold a national election", "The FBI to create COINTELPRO", "The NSA to collect telephone records"],
+    0,
+    "Executive Order 9066 authorized military commanders to designate military areas and exclude people from them; its implementation resulted in Japanese American incarceration.",
+    source.eo9066
+  ),
+
+  // Department of Homeland Security — family separation under zero tolerance
+  makeQuestion(
+    "Department of Homeland Security", "Records and oversight",
+    "Which policy did DHS and DOJ adopt in spring 2018 that led to family separations?",
+    ["The zero-tolerance policy", "Project MINARET", "PBSUCCESS", "The Tuskegee study"],
+    0,
+    "The HHS Inspector General says DHS and DOJ adopted a zero-tolerance policy in spring 2018, under which large numbers of families were separated.",
+    source.dhs
+  ),
+  makeQuestion(
+    "Department of Homeland Security", "Records and oversight",
+    "Under the described policy, what generally happened to separated parents and children?",
+    ["Adults were held in federal detention and children entered HHS custody", "Both were immediately released together", "Children were sent to state prisons", "Parents were transferred to the WRA"],
+    0,
+    "The HHS Inspector General report says adults were typically held in federal detention while children were placed in HHS custody.",
+    source.dhs
+  ),
+  makeQuestion(
+    "Department of Homeland Security", "Records and oversight",
+    "What did the HHS Inspector General say about advance notice to HHS?",
+    ["HHS was not notified in advance through interagency channels", "HHS designed the policy decades earlier", "HHS received complete family records first", "HHS was not involved in caring for children"],
+    0,
+    "The report says interagency channels were not used to notify HHS of the zero-tolerance policy in advance.",
+    source.dhs
+  ),
+  makeQuestion(
+    "Department of Homeland Security", "Records and oversight",
+    "What problem made it difficult to identify separated children for reunification?",
+    ["There were no established systems to track separated families across DHS and HHS", "The children had no names", "The families were all in one facility", "The records were held by the National Archives"],
+    0,
+    "The HHS Inspector General found that no procedures or systems had been established to track separated families across HHS and DHS for later reunification.",
+    source.dhs
+  ),
+  makeQuestion(
+    "Department of Homeland Security", "Records and oversight",
+    "What did the HHS Inspector General say about later tracking procedures?",
+    ["They still relied on manual processes vulnerable to error", "They were fully automated and error-proof", "They were never used", "They were managed by the Senate"],
+    0,
+    "The report says HHS took steps to improve tracking, but the procedures still included manual processes vulnerable to error.",
+    source.dhs
+  )
 ];
 
 const $ = (id) => document.getElementById(id);
-const agencies = ["CIA", "FBI", "NSA"];
+const agencyNames = [...new Set(questionBank.map((item) => item.agency))];
 const BOARD_KEY = "bully-council-board-v2";
 
 let score = 0;
 let round = 1;
 let questionIndex = 0;
 let roundQuestions = [];
-let hasAnswered = false;
+let previousAgencies = [];
+let answered = false;
 
 function shuffle(items) {
   const copy = [...items];
@@ -251,15 +374,22 @@ function shuffle(items) {
 }
 
 function buildRound() {
-  // Shuffle agency order, then shuffle five questions within each agency.
-  // This keeps the five-question agency blocks intact.
-  const agencyOrder = shuffle(agencies);
+  // Prefer three agencies that were not in the immediately previous round.
+  let available = agencyNames.filter((name) => !previousAgencies.includes(name));
+
+  // There are seven agencies, so normally four remain after a round.
+  // This fallback keeps the game working if the agency list is later changed.
+  if (available.length < 3) available = agencyNames;
+
+  const selectedAgencies = shuffle(available).slice(0, 3);
+  previousAgencies = selectedAgencies;
   roundQuestions = [];
 
-  for (const agency of agencyOrder) {
+  for (const agency of selectedAgencies) {
     const agencyQuestions = shuffle(
       questionBank.filter((item) => item.agency === agency)
-    );
+    ).slice(0, 5);
+
     roundQuestions.push(...agencyQuestions);
   }
 }
@@ -270,13 +400,14 @@ function renderQuestion() {
     return;
   }
 
-  hasAnswered = false;
+  answered = false;
   const item = roundQuestions[questionIndex];
 
   $("round-label").textContent = `Round ${round}`;
   $("progress").textContent = `Question ${questionIndex + 1} of 15`;
   $("agency").textContent = item.agency;
   $("question").textContent = item.question;
+
   $("feedback").innerHTML = "";
   $("feedback").classList.remove("visible");
   $("next").hidden = true;
@@ -288,27 +419,26 @@ function renderQuestion() {
     }))
   );
 
-  const choicesBox = $("choices");
-  choicesBox.innerHTML = "";
+  const box = $("choices");
+  box.innerHTML = "";
 
   choices.forEach((choice) => {
     const button = document.createElement("button");
     button.className = "choice";
     button.textContent = choice.text;
     button.addEventListener("click", () => answerQuestion(choice, item));
-    choicesBox.appendChild(button);
+    box.appendChild(button);
   });
 }
 
 function answerQuestion(choice, item) {
-  if (hasAnswered) return;
-  hasAnswered = true;
+  if (answered) return;
+  answered = true;
 
   const buttons = [...$("choices").querySelectorAll("button")];
   buttons.forEach((button) => {
     button.disabled = true;
-    const correctChoice = item.choices[item.answer];
-    if (button.textContent === correctChoice) {
+    if (button.textContent === item.choices[item.answer]) {
       button.classList.add("correct");
     }
   });
@@ -322,6 +452,7 @@ function answerQuestion(choice, item) {
   }
 
   const feedback = $("feedback");
+  feedback.innerHTML = "";
   feedback.classList.add("visible");
 
   const result = document.createElement("p");
@@ -334,12 +465,12 @@ function answerQuestion(choice, item) {
   fact.textContent = item.fact;
   feedback.appendChild(fact);
 
-  const source = document.createElement("a");
-  source.href = item.url;
-  source.target = "_blank";
-  source.rel = "noopener noreferrer";
-  source.textContent = `Open source: ${item.source}`;
-  feedback.appendChild(source);
+  const link = document.createElement("a");
+  link.href = item.url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = `Open source: ${item.source}`;
+  feedback.appendChild(link);
 
   const tag = document.createElement("div");
   tag.className = "fact-tag";
@@ -408,6 +539,7 @@ $("add-pin").addEventListener("click", () => {
     text,
     topic: $("pin-topic").value
   });
+
   input.value = "";
 });
 
