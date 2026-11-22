@@ -3,550 +3,66 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>bully council game</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-  background: #17191c;
-  color: #e8e8e2;
-}
-
-.panel, .score {
-  background: #24272c;
-  border-color: #484c52;
-}
-
-.muted { color: #b1b3b6; }
-
-button, .choice {
-  background: #30343a;
-  color: #f0f0eb;
-  border-color: #62666c;
-}
-
-button:hover:not(:disabled) { background: #41464d; }
-
-.choice.correct { background: #263d2b; border-color: #56835e; }
-.choice.wrong { background: #452b2b; border-color: #9a514b; }
-
-input, select, textarea {
-  background: #30343a;
-  color: #f0f0eb;
-  border-color: #62666c;
-}
-
-#board {
-  background-color: #29251f;
-  border-color: #665741;
-}
-
-.pin {
-  background: #393326;
-  color: #f0e7cf;
-  border-color: #756546;
-}
-
-.pin .tag {
-  background: #51472f;
-  border-color: #756546;
-}
-
-#feedback a, .source-link, .pin a { color: #9bc8f1; }
-
-  </style>
+  <title>Bully Council Game</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/game.js" defer></script>
 </head>
 <body>
-<main>
-  <div class="topline">
-    <div>
-      <h1>bully council game</h1>
-      <div class="muted small">A tiny quiz about documented government actions.</div>
-    </div>
-    <div class="score">Bully Points: <strong id="score">0</strong></div>
-  </div>
+  <main>
+    <header class="top">
+      <div>
+        <h1>bully council game</h1>
+        <p class="sub">A quiz about documented government actions.</p>
+      </div>
+      <div class="score">Timelord Points: <strong id="score">0</strong></div>
+    </header>
 
-  <section class="panel" id="game">
-    <div class="muted small" id="progress"></div>
-    <h2 id="agency"></h2>
-    <div id="question"></div>
-    <div id="choices"></div>
-    <div id="feedback" aria-live="polite"></div>
-    <button id="next" hidden>Next question</button>
-  </section>
+    <section class="panel" id="game">
+      <div class="status">
+        <span id="round-label">Round 1</span>
+        <span id="progress">Question 1 of 15</span>
+      </div>
 
-  <section class="panel" id="done">
-    <h2>Round complete</h2>
-    <p id="finalScore"></p>
-    <button id="restart">Play again</button>
-  </section>
+      <div class="agency" id="agency">CIA</div>
+      <h2 id="question"></h2>
+      <div id="choices"></div>
 
-  <section class="panel">
-    <h2>Evidence board</h2>
-    <p class="muted small">
-      Pins with the same topic are connected. A shared topic is not proof of a
-      direct link or cause.
-    </p>
-    <div class="row" style="margin-bottom:12px">
-      <input id="pinText" maxlength="180" placeholder="Add a note or fact to the board">
-      <select id="pinTag" aria-label="Choose a topic">
-        <option value="Surveillance">Surveillance</option>
-        <option value="Covert action">Covert action</option>
-        <option value="Political disruption">Political disruption</option>
-        <option value="Human research">Human research</option>
-        <option value="Records and oversight">Records and oversight</option>
-      </select>
-      <button id="addPin">Pin note</button>
-    </div>
-    <div id="board">
-      <svg id="lines" aria-hidden="true"></svg>
-      <div id="pins"></div>
-    </div>
-    <p class="muted small">Your notes are saved in this browser only.</p>
-  </section>
-</main>
+      <div id="feedback" aria-live="polite"></div>
+      <button id="next" hidden>Next question</button>
+    </section>
 
-<script>
-  const questions = [
-    {
-      agency: "CIA",
-      question: "A CIA memorandum from 1953 discussed planning for which action in Iran?",
-      choices: [
-        "Overthrowing Prime Minister Mohammad Mosaddeq",
-        "Starting a public health program",
-        "Building a new national parliament",
-        "Ending the monarchy"
-      ],
-      answer: 0,
-      explanation: "The declassified memorandum is titled “Factors Involved in the Overthrow of Mossadeq” and was prepared in the CIA’s Directorate of Plans.",
-      tag: "Covert action",
-      source: "State Department historical record",
-      url: "https://history.state.gov/historicaldocuments/frus1951-54Iran/d192"
-    },
-    {
-      agency: "CIA",
-      question: "In 1953, the CIA assumed responsibility for operations against which government?",
-      choices: [
-        "Jacobo Árbenz’s government in Guatemala",
-        "The government of Costa Rica",
-        "The government of Canada",
-        "The government of Sweden"
-      ],
-      answer: 0,
-      explanation: "A declassified CIA memorandum describes the agency’s role in efforts against the Árbenz government.",
-      tag: "Covert action",
-      source: "State Department historical record",
-      url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d287"
-    },
-    {
-      agency: "CIA",
-      question: "What did a declassified CIA account say about one propaganda tactic used during the Guatemala operation?",
-      choices: [
-        "It fabricated reports of Soviet arms deliveries and publicized a CIA-planted arms cache",
-        "It publicly announced all CIA plans in advance",
-        "It printed only neutral weather reports",
-        "It broadcast a correction before any false report"
-      ],
-      answer: 0,
-      explanation: "The CIA account says reports about Soviet arms deliveries were fabricated and a planted cache was presented as evidence.",
-      tag: "Political disruption",
-      source: "State Department historical record",
-      url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d287"
-    },
-    {
-      agency: "CIA",
-      question: "According to the same CIA account, where were members of Carlos Castillo Armas’s group trained?",
-      choices: [
-        "Nicaragua",
-        "Guatemala City",
-        "Panama",
-        "Cuba"
-      ],
-      answer: 0,
-      explanation: "The memorandum says approximately 85 members of the Castillo Armas group received training in Nicaragua.",
-      tag: "Covert action",
-      source: "State Department historical record",
-      url: "https://history.state.gov/historicaldocuments/frus1952-54Guat/d287"
-    },
-    {
-      agency: "CIA",
-      question: "What was MKULTRA described as in the 1977 Senate hearing title?",
-      choices: [
-        "A CIA program of research in behavioral modification",
-        "A public housing project",
-        "A military weather service",
-        "A congressional election program"
-      ],
-      answer: 0,
-      explanation: "The Senate hearing title identifies MKULTRA as the CIA’s program of research in behavioral modification.",
-      tag: "Human research",
-      source: "Senate Intelligence Committee hearing",
-      url: "https://www.intelligence.senate.gov/1977/08/03/hearings-joint-hearing-subcommittee-health-and-scientific-research-committee-human-resources-project/"
-    },
+    <section class="panel" id="round-complete" hidden>
+      <h2 id="complete-title">Round complete</h2>
+      <p id="complete-text"></p>
+      <button id="next-round">Start next round</button>
+    </section>
 
-    {
-      agency: "FBI",
-      question: "What was COINTELPRO, as described by the U.S. Senate’s Church Committee?",
-      choices: [
-        "A covert program to disrupt and discredit groups and individuals",
-        "A public records digitization project",
-        "A wildlife protection program",
-        "A presidential election system"
-      ],
-      answer: 0,
-      explanation: "The Senate’s account describes FBI COINTELPRO as covert action designed to disrupt and discredit groups and individuals.",
-      tag: "Political disruption",
-      source: "U.S. Senate Church Committee history",
-      url: "https://www.senate.gov/about/powers-procedures/investigations/church-committee.htm"
-    },
-    {
-      agency: "FBI",
-      question: "When did the FBI begin monitoring Martin Luther King Jr., according to Stanford’s King Institute?",
-      choices: [
-        "During the Montgomery bus boycott in December 1955",
-        "After he received the Nobel Peace Prize",
-        "In the 1980s",
-        "Only after his assassination"
-      ],
-      answer: 0,
-      explanation: "Stanford’s King Institute says FBI monitoring began in December 1955, during King’s involvement in the Montgomery bus boycott.",
-      tag: "Surveillance",
-      source: "Stanford Martin Luther King, Jr. Research and Education Institute",
-      url: "https://kinginstitute.stanford.edu/federal-bureau-investigation-fbi"
-    },
-    {
-      agency: "FBI",
-      question: "Which civil-rights leader was the focus of FBI surveillance and efforts to discredit him?",
-      choices: [
-        "Martin Luther King Jr.",
-        "Cesar Chavez",
-        "Rosa Parks",
-        "John Lewis"
-      ],
-      answer: 0,
-      explanation: "The Senate and Stanford sources document surveillance and counterintelligence actions directed at King.",
-      tag: "Surveillance",
-      source: "Stanford Martin Luther King, Jr. Research and Education Institute",
-      url: "https://kinginstitute.stanford.edu/federal-bureau-investigation-fbi"
-    },
-    {
-      agency: "FBI",
-      question: "Which groups did the Senate say were among the FBI’s COINTELPRO targets?",
-      choices: [
-        "The Southern Christian Leadership Conference and the anti-Vietnam War movement",
-        "Local gardening clubs only",
-        "Professional baseball teams",
-        "International shipping companies"
-      ],
-      answer: 0,
-      explanation: "The Senate’s Church Committee history lists the Southern Christian Leadership Conference and the anti-Vietnam War movement among the targets.",
-      tag: "Political disruption",
-      source: "U.S. Senate Church Committee history",
-      url: "https://www.senate.gov/about/powers-procedures/investigations/church-committee.htm"
-    },
-    {
-      agency: "FBI",
-      question: "What did the Senate report say the FBI’s COINTELPRO actions against targeted groups were designed to do?",
-      choices: [
-        "Disrupt and discredit their activities",
-        "Provide them with legal representation",
-        "Fund their public events",
-        "Recruit their members for Congress"
-      ],
-      answer: 0,
-      explanation: "That is the purpose given in the Senate’s description of the program.",
-      tag: "Political disruption",
-      source: "U.S. Senate Church Committee history",
-      url: "https://www.senate.gov/about/powers-procedures/investigations/church-committee.htm"
-    },
+    <section class="panel">
+      <h2>Evidence board</h2>
+      <p class="sub">
+        Pins with the same topic are connected. A shared topic is not proof of
+        a direct connection.
+      </p>
 
-    {
-      agency: "NSA",
-      question: "Which two NSA projects did the Senate Church Committee identify as monitoring wire communications?",
-      choices: [
-        "SHAMROCK and MINARET",
-        "MKULTRA and COINTELPRO",
-        "PBSUCCESS and TPAJAX",
-        "Apollo and Mercury"
-      ],
-      answer: 0,
-      explanation: "The Senate account names Projects SHAMROCK and MINARET and says they monitored wire communications to and from the United States.",
-      tag: "Surveillance",
-      source: "U.S. Senate Church Committee history",
-      url: "https://www.senate.gov/about/powers-procedures/investigations/church-committee.htm"
-    },
-    {
-      agency: "NSA",
-      question: "What kind of information did the NSA’s Section 215 bulk telephony program collect?",
-      choices: [
-        "Telephone call records, or metadata",
-        "The spoken contents of every call",
-        "Printed books from public libraries",
-        "Only international television broadcasts"
-      ],
-      answer: 0,
-      explanation: "The program concerned bulk telephony metadata. Metadata describes call records; it is not the audio content of calls.",
-      tag: "Surveillance",
-      source: "Privacy and Civil Liberties Oversight Board report",
-      url: "https://www.pclob.gov/Oversight"
-    },
-    {
-      agency: "NSA",
-      question: "What did the Privacy and Civil Liberties Oversight Board conclude about the Section 215 bulk phone-records program’s unique counterterrorism value?",
-      choices: [
-        "There was little evidence it produced material results unavailable by other means",
-        "It had solved every terrorism case",
-        "It was a program run by local police",
-        "It collected no telephone records"
-      ],
-      answer: 0,
-      explanation: "The Board’s report said it saw little evidence of unique material counterterrorism results from the bulk collection program.",
-      tag: "Records and oversight",
-      source: "Privacy and Civil Liberties Oversight Board report",
-      url: "https://www.pclob.gov/Oversight"
-    },
-    {
-      agency: "NSA",
-      question: "What did the USA FREEDOM Act of 2015 do to bulk collection under Section 215?",
-      choices: [
-        "Banned bulk collection and provided a new mechanism for obtaining provider-held data",
-        "Required every phone call to be recorded",
-        "Transferred the program to the FBI",
-        "Created Project SHAMROCK"
-      ],
-      answer: 0,
-      explanation: "The Justice Department and the Director of National Intelligence described the law as banning bulk collection under Section 215 and establishing a new mechanism involving data held by providers.",
-      tag: "Records and oversight",
-      source: "U.S. Department of Justice statement",
-      url: "https://www.justice.gov/archives/opa/pr/joint-statement-department-justice-and-office-director-national-intelligence-declassificati-1"
-    },
-    {
-      agency: "NSA",
-      question: "Under the new Section 215 mechanism described in the government’s 2015 statement, where did the phone records remain?",
-      choices: [
-        "At telephone companies, with data obtained through a legal process",
-        "In a public library",
-        "On a publicly accessible website",
-        "At the Federal Election Commission"
-      ],
-      answer: 0,
-      explanation: "The statement says the new approach left the data with telephone companies and allowed government access through specified legal orders.",
-      tag: "Records and oversight",
-      source: "U.S. Department of Justice statement",
-      url: "https://www.justice.gov/archives/opa/pr/joint-statement-department-justice-and-office-director-national-intelligence-declassificati-1"
-    }
-  ];
+      <div class="add-pin">
+        <input id="pin-input" maxlength="180" placeholder="Add your own note">
+        <select id="pin-topic" aria-label="Choose note topic">
+          <option>Surveillance</option>
+          <option>Covert action</option>
+          <option>Political disruption</option>
+          <option>Human research</option>
+          <option>Records and oversight</option>
+        </select>
+        <button id="add-pin">Pin note</button>
+      </div>
 
-  const scoreEl = document.getElementById("score");
-  const progressEl = document.getElementById("progress");
-  const agencyEl = document.getElementById("agency");
-  const questionEl = document.getElementById("question");
-  const choicesEl = document.getElementById("choices");
-  const feedbackEl = document.getElementById("feedback");
-  const nextBtn = document.getElementById("next");
-  const gameEl = document.getElementById("game");
-  const doneEl = document.getElementById("done");
-
-  let index = 0;
-  let score = 0;
-  let answered = false;
-
-  function showQuestion() {
-    if (index >= questions.length) {
-      gameEl.style.display = "none";
-      doneEl.style.display = "block";
-      document.getElementById("finalScore").textContent =
-        `You earned ${score} Bully Point${score === 1 ? "" : "s"} out of 15.`;
-      return;
-    }
-
-    const item = questions[index];
-    answered = false;
-    progressEl.textContent = `Question ${index + 1} of 15 · Agency ${Math.floor(index / 5) + 1} of 3`;
-    agencyEl.textContent = item.agency;
-    questionEl.textContent = item.question;
-    choicesEl.innerHTML = "";
-    feedbackEl.textContent = "";
-    nextBtn.hidden = true;
-
-    item.choices.forEach((choice, choiceIndex) => {
-      const button = document.createElement("button");
-      button.className = "choice";
-      button.textContent = choice;
-      button.addEventListener("click", () => chooseAnswer(choiceIndex, button));
-      choicesEl.appendChild(button);
-    });
-  }
-
-  function addEvidencePin(item) {
-    const currentPins = loadPins();
-    currentPins.push({
-      text: item.explanation,
-      tag: item.tag,
-      source: item.source,
-      url: item.url
-    });
-    savePins(currentPins);
-    renderPins();
-  }
-
-  function chooseAnswer(choiceIndex, button) {
-    if (answered) return;
-    answered = true;
-
-    const item = questions[index];
-    const buttons = [...choicesEl.querySelectorAll("button")];
-    buttons.forEach(b => b.disabled = true);
-
-    if (choiceIndex === item.answer) {
-      score += 1;
-      scoreEl.textContent = score;
-      button.classList.add("correct");
-      feedbackEl.append("Correct. +1 Bully Point. ");
-    } else {
-      button.classList.add("wrong");
-      buttons[item.answer].classList.add("correct");
-      feedbackEl.append("Not quite. ");
-    }
-
-    feedbackEl.append(`${item.explanation} Source: `);
-    const link = document.createElement("a");
-    link.href = item.url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.textContent = item.source;
-    feedbackEl.appendChild(link);
-
-    addEvidencePin(item);
-    nextBtn.hidden = false;
-  }
-
-  nextBtn.addEventListener("click", () => {
-    index += 1;
-    showQuestion();
-  });
-
-  document.getElementById("restart").addEventListener("click", () => {
-    index = 0;
-    score = 0;
-    scoreEl.textContent = "0";
-    doneEl.style.display = "none";
-    gameEl.style.display = "block";
-    showQuestion();
-  });
-
-  const storageKey = "bully-council-pins";
-
-  function loadPins() {
-    try {
-      return JSON.parse(localStorage.getItem(storageKey) || "[]");
-    } catch {
-      return [];
-    }
-  }
-
-  function savePins(pins) {
-    localStorage.setItem(storageKey, JSON.stringify(pins));
-  }
-
-  function renderPins() {
-    const pinsEl = document.getElementById("pins");
-    const boardEl = document.getElementById("board");
-    const svg = document.getElementById("lines");
-    const pins = loadPins();
-
-    pinsEl.innerHTML = "";
-    svg.innerHTML = "";
-
-    pins.forEach((pin, i) => {
-      const card = document.createElement("div");
-      card.className = "pin";
-      card.dataset.tag = pin.tag;
-
-      const remove = document.createElement("button");
-      remove.className = "remove";
-      remove.textContent = "x";
-      remove.title = "Remove pin";
-      remove.addEventListener("click", () => {
-        const updated = loadPins();
-        updated.splice(i, 1);
-        savePins(updated);
-        renderPins();
-      });
-
-      const text = document.createElement("div");
-      text.textContent = pin.text;
-
-      const tag = document.createElement("span");
-      tag.className = "tag";
-      tag.textContent = pin.tag;
-
-      card.append(remove, text, tag);
-
-      if (pin.url) {
-        const link = document.createElement("a");
-        link.href = pin.url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.textContent = pin.source || "Open source";
-        card.appendChild(link);
-      }
-
-      pinsEl.appendChild(card);
-    });
-
-    requestAnimationFrame(() => drawConnections(boardEl, svg));
-  }
-
-  function drawConnections(board, svg) {
-    const cards = [...document.querySelectorAll(".pin")];
-    const bounds = board.getBoundingClientRect();
-    svg.setAttribute("viewBox", `0 0 ${bounds.width} ${bounds.height}`);
-    svg.setAttribute("width", bounds.width);
-    svg.setAttribute("height", bounds.height);
-
-    const seen = new Map();
-
-    cards.forEach(card => {
-      const tag = card.dataset.tag;
-      const previous = seen.get(tag);
-
-      if (previous) {
-        const a = previous.getBoundingClientRect();
-        const b = card.getBoundingClientRect();
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", a.left + a.width / 2 - bounds.left);
-        line.setAttribute("y1", a.top + a.height / 2 - bounds.top);
-        line.setAttribute("x2", b.left + b.width / 2 - bounds.left);
-        line.setAttribute("y2", b.top + b.height / 2 - bounds.top);
-        line.setAttribute("stroke", "#9b5d46");
-        line.setAttribute("stroke-width", "2");
-        svg.appendChild(line);
-      }
-
-      seen.set(tag, card);
-    });
-  }
-
-  document.getElementById("addPin").addEventListener("click", () => {
-    const input = document.getElementById("pinText");
-    const text = input.value.trim();
-    if (!text) return;
-
-    const pins = loadPins();
-    pins.push({
-      text,
-      tag: document.getElementById("pinTag").value
-    });
-    savePins(pins);
-    input.value = "";
-    renderPins();
-  });
-
-  window.addEventListener("resize", renderPins);
-
-  renderPins();
-  showQuestion();
-</script>
+      <div id="board">
+        <svg id="lines" aria-hidden="true"></svg>
+        <div id="pins"></div>
+      </div>
+      <button id="clear-board" class="quiet-button">Clear board</button>
+      <p class="sub small">Board notes are saved in this browser.</p>
+    </section>
+  </main>
 </body>
 </html>
